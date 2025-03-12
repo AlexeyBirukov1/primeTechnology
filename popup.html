@@ -1,26 +1,17 @@
 ﻿<!DOCTYPE html>
-
 <html>
   <head>
     <title>Course Analyzer</title>
-    <style>
-      body {
-        width: 300px;
-        padding: 10px;
-        font-family: Arial, sans-serif;
-      }
-      h2 {
-        margin: 0 0 10px;
-      }
-      p {
-        margin: 5px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <h1>Course Analyzer</h1>
     <h2 id="courseTitle">Загрузка...</h2>
-    <p id="courseDescription">Анализируем страницу...</p>
+    <p><strong>Цена:</strong> <span id="coursePrice">Анализируем...</span></p>
+    <p><strong>Рейтинг:</strong> <span id="courseRating">Анализируем...</span> (<span id="courseRatingCount">0</span> оценок)</p>
+    <p><strong>Сложность:</strong> <span id="courseDifficulty">Анализируем...</span></p>
+    <p><strong>Уроки:</strong> <span id="courseLessonsCount">Анализируем...</span></p>
+    <p><strong>Описание:</strong> <span id="courseDescription">Анализируем страницу...</span></p>
     <script src="popup.js"></script>
   </body>
 </html>

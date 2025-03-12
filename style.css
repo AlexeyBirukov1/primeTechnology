@@ -1,19 +1,20 @@
 ﻿body {
-      width: 300px;
-      padding: 10px;
-      font-family: Arial, sans-serif;
+  width: 300px;
+  padding: 10px;
+  font-family: Arial, sans-serif;
 }
-label {
-        display: block;
-        margin: 10px 0 5px;
+h1 {
+  font-size: 18px;
+  margin: 0 0 10px;
 }
-button {
-        margin-top: 10px;
-        padding: 5px 10px;
-        width: 100%;
+h2 {
+  font-size: 16px;
+  margin: 0 0 10px;
 }
-input {
-        width: 100%;
-        padding: 5px;
-        box-sizing: border-box;
+p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+strong {
+  font-weight: bold;
 }

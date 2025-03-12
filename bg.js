@@ -13,26 +13,50 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return response.text();
       })
       .then(html => {
-        // Парсим HTML с помощью DOMParser
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
-        // Извлекаем название курса
-        const titleElement = doc.querySelector("h1.course-promo__header");
-        const title = titleElement ? titleElement.textContent.trim() : "Название курса не найдено";
+        // Извлекаем JSON-LD из тега <script>
+        const jsonLdScript = doc.querySelector('script[type="application/ld+json"]');
+        let courseData = {};
+        if (jsonLdScript) {
+          const jsonData = JSON.parse(jsonLdScript.textContent);
 
-        // Извлекаем описание
-        const descriptionElement = doc.querySelector("div.course-promo__description");
-        const description = descriptionElement ? descriptionElement.textContent.trim() : "Описание не найдено";
+          courseData = {
+            title: jsonData.name || "Название курса не найдено",
+            description: jsonData.description || "Описание не найдено",
+            price: parseFloat(jsonData.offers?.price) || 0,
+            priceCurrency: jsonData.offers?.priceCurrency || "USD",
+            rating: parseFloat(jsonData.aggregateRating?.ratingValue) || 0,
+            ratingCount: parseInt(jsonData.aggregateRating?.ratingCount) || 0,
+            url: jsonData.url || url
+          };
+        } else {
+          // Fallback на старые селекторы, если JSON-LD нет
+          courseData = {
+            title: getText(doc, "h1.course-promo__header", "Название курса не найдено"),
+            description: getText(doc, "div.course-promo__description", "Описание не найдено"),
+            price: 0, // Нет данных в статике
+            priceCurrency: "USD",
+            rating: 0, // Нет данных в статике
+            ratingCount: 0,
+            url: url
+          };
+        }
 
-        // Формируем результат
-        const courseData = {
-          title: title,
-          description: description
+        // Пока данных о сложности и уроках нет, добавим placeholders
+        courseData.difficulty = "Сложность не найдена"; // Нужно уточнить селектор
+        courseData.lessonsCount = "Количество уроков не указано"; // Нужно уточнить селектор
+
+        // Логика сортировки (пример для одного курса, расширяемо для массива)
+        const sortedCourseData = {
+          ...courseData,
+          // Здесь можно добавить сортировку, если будет массив курсов
+          // Например, sortedCourses.sort((a, b) => a.price - b.price);
         };
 
-        console.log("Данные курса:", courseData);
-        sendResponse(courseData);
+        console.log("Данные курса:", sortedCourseData);
+        sendResponse(sortedCourseData);
       })
       .catch(error => {
         console.error("Ошибка:", error);
@@ -45,3 +69,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true; // Асинхронный ответ
   }
 });
+
+// Вспомогательная функция для извлечения текста
+function getText(doc, selector, defaultValue) {
+  const element = doc.querySelector(selector);
+  return element ? element.textContent.trim() : defaultValue;
+}
