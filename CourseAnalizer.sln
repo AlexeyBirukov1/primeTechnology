@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{9B77C52D-7575-47BE-89CB-B2C2448BE8C1}"
+	ProjectSection(SolutionItems) = preProject
+		content.js = content.js
+		manifest.json = manifest.json
+		popup.html = popup.html
+		style.css = style.css
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6E3DCD49-0A9E-4ADC-B984-A228F5E72915}
+	EndGlobalSection
+EndGlobal
