@@ -12,8 +12,8 @@ function parseCourseData() {
   // Количество уроков
   const lessonsElement = document.querySelector('div.course-promo-includes li b');
   const lessonsCount = lessonsElement ? `${lessonsElement.textContent.trim()} уроков` : "Количество уроков не указано";
-
   // Цена
+
   const priceElement = document.querySelector(".format-price");
   let price = 0;
   let priceCurrency = "RUB"; // Форсируем RUB, как ты попросил
