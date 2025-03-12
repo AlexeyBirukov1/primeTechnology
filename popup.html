@@ -3,22 +3,24 @@
 <html>
   <head>
     <title>Course Analyzer</title>
-    <link rel="stylesheet" href="style.css"/>
+    <style>
+      body {
+        width: 300px;
+        padding: 10px;
+        font-family: Arial, sans-serif;
+      }
+      h2 {
+        margin: 0 0 10px;
+      }
+      p {
+        margin: 5px 0;
+      }
+    </style>
   </head>
   <body>
     <h1>Course Analyzer</h1>
-    <form id="courseForm">
-      <label for="courseName">Название курса:</label>
-      <input type="text" id="courseName" name="courseName" placeholder="Введите название">
-
-      <label for="priceRange">Ценовой диапазон:</label>
-      <input type="text" id="priceRange" name="priceRange" placeholder="Например, 5000-7000 руб">
-
-      <label for="duration">Длительность курса:</label>
-      <input type="text" id="duration" name="duration" placeholder="Например, 3 месяца">
-
-      <button type="submit">Отправить</button>
-    </form>
+    <h2 id="courseTitle">Загрузка...</h2>
+    <p id="courseDescription">Анализируем страницу...</p>
     <script src="popup.js"></script>
   </body>
 </html>
