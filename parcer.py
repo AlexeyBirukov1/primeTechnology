@@ -1,35 +1,35 @@
 import requests
 from bs4 import BeautifulSoup
 
-# URL курса на Stepik (замени на свой)
+# URL РєСѓСЂСЃР° РЅР° Stepik (Р·Р°РјРµРЅРё РЅР° СЃРІРѕР№)
 url = "https://stepik.org/course/58852"
 
-# Заголовки, чтобы сайт не блокировал запрос
+# Р—Р°РіРѕР»РѕРІРєРё, С‡С‚РѕР±С‹ СЃР°Р№С‚ РЅРµ Р±Р»РѕРєРёСЂРѕРІР°Р» Р·Р°РїСЂРѕСЃ
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 }
 
-# Выполняем запрос к странице
+# Р’С‹РїРѕР»РЅСЏРµРј Р·Р°РїСЂРѕСЃ Рє СЃС‚СЂР°РЅРёС†Рµ
 response = requests.get(url, headers=headers)
 
-# Проверяем, что запрос успешен
+# РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ Р·Р°РїСЂРѕСЃ СѓСЃРїРµС€РµРЅ
 if response.status_code == 200:
-    # Парсим HTML
+    # РџР°СЂСЃРёРј HTML
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Извлекаем название курса (обычно в теге <h1> с классом)
+    # РР·РІР»РµРєР°РµРј РЅР°Р·РІР°РЅРёРµ РєСѓСЂСЃР° (РѕР±С‹С‡РЅРѕ РІ С‚РµРіРµ <h1> СЃ РєР»Р°СЃСЃРѕРј)
     title = soup.find("h1", class_="course-promo__header")
     if title:
-        print("Название курса:", title.text.strip())
+        print("РќР°Р·РІР°РЅРёРµ РєСѓСЂСЃР°:", title.text.strip())
     else:
-        print("Название курса не найдено")
+        print("РќР°Р·РІР°РЅРёРµ РєСѓСЂСЃР° РЅРµ РЅР°Р№РґРµРЅРѕ")
 
-    # Извлекаем описание курса (может быть в теге <div> с определенным классом)
+    # РР·РІР»РµРєР°РµРј РѕРїРёСЃР°РЅРёРµ РєСѓСЂСЃР° (РјРѕР¶РµС‚ Р±С‹С‚СЊ РІ С‚РµРіРµ <div> СЃ РѕРїСЂРµРґРµР»РµРЅРЅС‹Рј РєР»Р°СЃСЃРѕРј)
     description = soup.find("div", class_="course-promo__description")
     if description:
-        print("Описание:", description.text.strip())
+        print("РћРїРёСЃР°РЅРёРµ:", description.text.strip())
     else:
-        print("Описание не найдено")
+        print("РћРїРёСЃР°РЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ")
 
 else:
-    print(f"Ошибка при загрузке страницы: {response.status_code}")
+    print(f"РћС€РёР±РєР° РїСЂРё Р·Р°РіСЂСѓР·РєРµ СЃС‚СЂР°РЅРёС†С‹: {response.status_code}")
