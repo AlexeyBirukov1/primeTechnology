@@ -1,15 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const url = tabs[0].url;
-
-    // Отправляем запрос в background.js
-    chrome.runtime.sendMessage({ action: "parseCourse", url: url }, (response) => {
-      if (response) {
+    chrome.tabs.sendMessage(tabs[0].id, { action: "parseCourse" }, (response) => {
+      if (response && response.title && response.description) {
         document.getElementById("courseTitle").textContent = response.title;
         document.getElementById("courseDescription").textContent = response.description;
       } else {
-        document.getElementById("courseTitle").textContent = "Ошибка";
-        document.getElementById("courseDescription").textContent = "Не удалось получить данные";
+        document.getElementById("courseTitle").textContent = response?.title || "Ошибка";
+        document.getElementById("courseDescription").textContent = response?.description || "Неизвестная ошибка";
       }
     });
   });

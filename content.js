@@ -1,7 +1,19 @@
-let courseName = document.querySelector("format-price")?.innerText || "Название не найдено";
-let coursePrice = document.querySelector(".price")?.innerText || "Цена не найдена";
-let courseDescription = document.querySelector("p")?.innerText || "Описание не найдено";
+function parseCourseData() {
+  const titleElement = document.querySelector("h1.course-promo__header");
+  const title = titleElement ? titleElement.textContent.trim() : "Название курса не найдено";
 
-console.log("Курс:", courseName);
-console.log("Цена:", coursePrice);
-console.log("Описание:", courseDescription);
+  const descriptionElement = document.querySelector("div.course-promo__description");
+  const description = descriptionElement ? descriptionElement.textContent.trim() : "Описание не найдено";
+
+  return {
+    title: title,
+    description: description
+  };
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "parseCourse") {
+    const courseData = parseCourseData();
+    sendResponse(courseData);
+  }
+});
