@@ -1,13 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from db import add_course_to_db
-# from gptanalysis import analyze_course
-import sys
-import os
+from .db import add_course_to_db
+from .gptanalysis import analyze_course  # Теперь импортируем из пакета backend
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 app = FastAPI()
-
 
 class Course(BaseModel):
     name: str
@@ -18,13 +14,12 @@ class Course(BaseModel):
     year: int
     valuate: str
 
-
 @app.post("/add_course")
 async def add_course(course: Course):
-    # Анализ курса через заглушку GPT
-    # valuate = analyze_course(course.desc)
-    valuate = "12/10"
-    course_data = course.   dict()
+    # Анализ курса через GPT (раскомментируй, когда будет готово)
+    # valuate = analyze_course() or "12/10"  # Заглушка, если GPT не работает
+    valuate = None
+    course_data = course.dict()
     course_data['valuate'] = valuate
 
     # Добавление в базу

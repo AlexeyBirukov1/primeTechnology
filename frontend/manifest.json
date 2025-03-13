@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Stepik Course Filter",
+  "version": "1.0",
+  "description": "Расширение для сбора данных о курсах и получения рекомендаций.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "https://stepik.org/*",
+    "https://your-backend-url.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://stepik.org/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

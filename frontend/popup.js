@@ -13,6 +13,7 @@ const recommendedDescription = document.getElementById('recommendedDescription')
 const recommendedPrice = document.getElementById('recommendedPrice');
 const recommendedRating = document.getElementById('recommendedRating');
 const recommendedNeuralRating = document.getElementById('recommendedNeuralRating');
+const levelButtons = document.querySelectorAll('.level-button');
 
 // Определяем, на каком сайте находится пользователь
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -27,19 +28,44 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   }
 });
 
+// Обработчик нажатия кнопок уровней
+levelButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Переключаем состояние кнопки
+    button.classList.toggle('active');
+  });
+});
+
 // Обработчик нажатия кнопки "Сравнить" для Stepik
 compareButton.addEventListener('click', () => {
-  // Запрашиваем оценку нейросети у backend
-  chrome.runtime.sendMessage({ action: 'getNeuralNetworkRating' }, (response) => {
-    if (response && response.rating) {
-      // Отображаем поле "Оценка нейросети"
-      neuralRating.classList.remove('hidden');
-      ratingValue.textContent = response.rating;
-    } else {
-      neuralRating.classList.remove('hidden');
-      ratingValue.textContent = 'Ошибка';
+  const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+  const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+
+  // Собираем выбранные уровни
+  const selectedLevels = [];
+  levelButtons.forEach(button => {
+    if (button.classList.contains('active')) {
+      selectedLevels.push(button.id);
     }
   });
+
+  if (selectedLevels.length === 0) {
+    alert('Пожалуйста, выберите хотя бы один уровень курса.');
+    return;
+  }
+
+  // Отправляем данные в background.js
+  chrome.runtime.sendMessage({
+    action: 'applyFilters',
+    filters: {
+      minPrice,
+      maxPrice,
+      levels: selectedLevels
+    }
+  });
+
+  // Закрываем popup
+  window.close();
 });
 
 // Обработчик нажатия кнопки "Сравнить" для других сайтов

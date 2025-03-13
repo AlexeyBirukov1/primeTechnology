@@ -1,11 +1,10 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-# Конфигурация базы данных (замените на свои данные)
 DB_CONFIG = {
     "dbname": "courses_db",
     "user": "postgres",
-    "password": "COMBO", # Тут пароль который был при установке PostgreSQL
+    "password": "COMBO",
     "host": "localhost",
     "port": "5432"
 }
@@ -47,6 +46,5 @@ def add_course_to_db(course_data: dict) -> int:
     conn.close()
     return course_id
 
-# Инициализация базы при запуске
 if __name__ == "__main__":
     init_db()
