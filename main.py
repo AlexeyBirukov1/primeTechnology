@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from db import add_course_to_db
-from gptanalysis import analyze_course
+# from gptanalysis import analyze_course
 import sys
 import os
 
