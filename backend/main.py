@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from .db import add_course_to_db, DB_FILE, init_db
 import sqlite3
 import logging
-from .gptanalysis import analyze_course
 from fastapi.middleware.cors import CORSMiddleware
 
 
