@@ -1,20 +1,38 @@
 {
-  "manifest_version": 3,
-  "name": "СравниКурс",
-  "version": "1.0",
-  "description": "Использование динамичной базы данных и продвинутых ИИ технологий для выбора лучших онлайн-курсов!",
-  "permissions": ["activeTab"],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    }
-  },
+    "manifest_version": 3,
+    "name": "Course Filter",
+    "version": "1.0",
+    "description": "Расширение для сбора данных о курсах и получения рекомендаций.",
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "tabs",
+      "webRequest",
+      "webRequestBlocking",
+      "storage",
+      "https://stepik.org/*",
+      "https://your-backend-url.com/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+      }
+    },
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
     "128": "icon128.png"
+  },
+    "content_scripts": [
+      {
+        "matches": ["https://stepik.org/*"],
+        "js": ["content.js"]
+      }
+    ]
   }
-}

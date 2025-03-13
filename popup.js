@@ -1,76 +1,79 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Получаем данные с активной вкладки
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-            target: { tabId: tabs[0].id },
-            function: extractCourseData
-        }, (results) => {
-            const courseData = results[0].result || {
-                name: "Не найдено",
-                desc: "Не найдено",
-                site: "Не найдено",
-                price: 0,
-                rating: 0,
-                year: 2025, // Заглушка, т.к. года нет в HTML
-                valuate: "Пока нет оценки"
-            };
+// popup.js
 
-            // Заполняем поля в popup
-            document.getElementById('name').textContent = courseData.name;
-            document.getElementById('desc').textContent = courseData.desc;
-            document.getElementById('site').textContent = courseData.site;
-            document.getElementById('price').textContent = courseData.price;
-            document.getElementById('rating').textContent = courseData.rating;
-            document.getElementById('year').textContent = courseData.year;
-            document.getElementById('valuate').textContent = courseData.valuate;
+// Элементы интерфейса
+const stepikMode = document.getElementById('stepikMode');
+const otherSiteMode = document.getElementById('otherSiteMode');
+const compareButton = document.getElementById('compareButton');
+const compareButtonOtherSite = document.getElementById('compareButtonOtherSite');
+const courseRating = document.getElementById('courseRating');
+const courseRatingValue = document.getElementById('courseRatingValue');
+const recommendedCourse = document.getElementById('recommendedCourse');
+const recommendedTitle = document.getElementById('recommendedTitle');
+const recommendedDescription = document.getElementById('recommendedDescription');
+const recommendedPrice = document.getElementById('recommendedPrice');
+const recommendedRating = document.getElementById('recommendedRating');
+const recommendedNeuralRating = document.getElementById('recommendedNeuralRating');
 
-            // Отправка на бэкенд
-            document.getElementById('send-btn').addEventListener('click', () => {
-                fetch('http://localhost:8000/add_course', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(courseData)
-                })
-                .then(response => response.json())
-                .then(data => alert('Курс добавлен: ' + data.message))
-                .catch(error => alert('Ошибка: ' + error));
-            });
-        });
-    });
+// Определяем, на каком сайте находится пользователь
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  const url = tabs[0].url;
+
+  if (url.includes('stepik.org')) {
+    // Режим для Stepik
+    stepikMode.classList.remove('hidden');
+  } else {
+    // Режим для других сайтов
+    otherSiteMode.classList.remove('hidden');
+  }
 });
 
-// Функция для извлечения данных из карточки курса
-function extractCourseData() {
-    const card = document.querySelector('.course-card');
-    if (!card) return null;
+// Обработчик нажатия кнопки "Сравнить" для Stepik
+compareButton.addEventListener('click', () => {
+  // Запрашиваем оценку нейросети у backend
+  chrome.runtime.sendMessage({ action: 'getNeuralNetworkRating' }, (response) => {
+    if (response && response.rating) {
+      // Отображаем поле "Оценка нейросети"
+      neuralRating.classList.remove('hidden');
+      ratingValue.textContent = response.rating;
+    } else {
+      neuralRating.classList.remove('hidden');
+      ratingValue.textContent = 'Ошибка';
+    }
+  });
+});
 
-    // Название курса
-    const name = card.querySelector('.course-card__title')?.textContent.trim() || "Не указано";
+// Обработчик нажатия кнопки "Сравнить" для других сайтов
+compareButtonOtherSite.addEventListener('click', () => {
+  // Собираем данные о курсе
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'collectCourseData' }, (response) => {
+      if (response && response.data) {
+        // Отправляем данные на backend
+        chrome.runtime.sendMessage(
+          { action: 'evaluateCourse', data: response.data },
+          (backendResponse) => {
+            if (backendResponse) {
+              // Отображаем оценку курса
+              courseRating.classList.remove('hidden');
+              courseRatingValue.textContent = backendResponse.courseRating;
 
-    // Описание курса
-    const desc = card.querySelector('.course-card__summary .shortened-text')?.textContent.trim() || "Не указано";
-
-    // Ссылка на курс (добавляем базовый домен, если нужно)
-    const siteRelative = card.querySelector('.catalog-rich-card__link-wrapper')?.getAttribute('href') || "";
-    const site = siteRelative ? `https://stepik.org${siteRelative}` : "Не указано";
-
-    const priceRegular = card.querySelector('.display-price__price_regular')?.textContent || "";
-    const priceText = priceDiscount || priceRegular || "0";
-    const price = parseFloat(priceText.replace(/[^\d]/g, '')) || 0;
-
-    // Рейтинг (берем число из текста, например, "5 (1.4K)")
-    const ratingText = card.querySelector('.course-card__widget[data-type="rating"] > span:last-child')?.textContent || "0";
-    const rating = parseFloat(ratingText.split(' ')[0]) || 0;
-
-    const year = 2025; // Можно заменить, если найдёте источник
-
-    return {
-        name: name,
-        desc: desc,
-        site: site,
-        price: price,
-        rating: rating,
-        year: year,
-        valuate: "Пока нет оценки"
-    };
-}
+              // Отображаем карточку рекомендуемого курса
+              recommendedCourse.classList.remove('hidden');
+              recommendedTitle.textContent = backendResponse.recommendedCourse.title;
+              recommendedDescription.textContent = backendResponse.recommendedCourse.description;
+              recommendedPrice.textContent = backendResponse.recommendedCourse.price;
+              recommendedRating.textContent = backendResponse.recommendedCourse.rating;
+              recommendedNeuralRating.textContent = backendResponse.recommendedCourse.neuralRating;
+            } else {
+              courseRating.classList.remove('hidden');
+              courseRatingValue.textContent = 'Ошибка';
+            }
+          }
+        );
+      } else {
+        courseRating.classList.remove('hidden');
+        courseRatingValue.textContent = 'Не удалось собрать данные';
+      }
+    });
+  });
+});
