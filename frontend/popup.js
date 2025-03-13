@@ -54,8 +54,6 @@ function extractCourseData() {
     const siteRelative = card.querySelector('.catalog-rich-card__link-wrapper')?.getAttribute('href') || "";
     const site = siteRelative ? `https://stepik.org${siteRelative}` : "Не указано";
 
-    // Цена (берем скидочную цену, если есть, иначе старую)
-    const priceDiscount = card.querySelector('.display-price__price_discount')?.textContent || "";
     const priceRegular = card.querySelector('.display-price__price_regular')?.textContent || "";
     const priceText = priceDiscount || priceRegular || "0";
     const price = parseFloat(priceText.replace(/[^\d]/g, '')) || 0;
@@ -64,7 +62,6 @@ function extractCourseData() {
     const ratingText = card.querySelector('.course-card__widget[data-type="rating"] > span:last-child')?.textContent || "0";
     const rating = parseFloat(ratingText.split(' ')[0]) || 0;
 
-    // Год (заглушка, т.к. в HTML нет данных)
     const year = 2025; // Можно заменить, если найдёте источник
 
     return {

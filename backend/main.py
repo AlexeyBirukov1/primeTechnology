@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from db import add_course_to_db
 from gptanalysis import analyze_course
+import sys
+import os
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 app = FastAPI()
 
 
@@ -19,7 +22,8 @@ class Course(BaseModel):
 @app.post("/add_course")
 async def add_course(course: Course):
     # Анализ курса через заглушку GPT
-    valuate = analyze_course(course.desc)
+    # valuate = analyze_course(course.desc)
+    valuate = "12/10"
     course_data = course.   dict()
     course_data['valuate'] = valuate
 
