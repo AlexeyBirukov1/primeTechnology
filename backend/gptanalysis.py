@@ -1,27 +1,58 @@
+import sqlite3
 import openai
 
-API_KEY = ""  # Вставьте ваш ключ API
+API_KEY = "your_openai_api_key_here"  # Вставьте ключ OpenAI
 openai.api_key = API_KEY
 
-def create_prompt(name, description, price, rating, reviews, difficulty, valuate):
+DB_FILE = "courses.sqlite"
+
+def get_data_from_db(course_id=None):
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        if course_id:
+            cursor.execute("SELECT name, description, price, rating, reviews, difficulty, valuate FROM courses WHERE id = ?", (course_id,))
+        else:
+            cursor.execute("SELECT name, description, price, rating, reviews, difficulty, valuate FROM courses LIMIT 1")
+        data = cursor.fetchone()
+        conn.close()
+
+        if data is None:
+            raise ValueError("Нет данных в базе данных")
+
+        name, description, price, rating, reviews, difficulty, valuate = data
+        return {
+            "name": name,
+            "description": description,
+            "price": price,
+            "rating": rating,
+            "reviews": reviews,
+            "difficulty": difficulty,
+            "valuate": valuate
+        }
+
+    except sqlite3.Error as e:
+        print(f"Ошибка подключения к базе данных: {e}")
+        return None
+
+def create_prompt(course_data):
     prompt = f"""
     Оцените курс на основе следующих параметров:
-    - Название: {name}
-    - Описание: {description}
-    - Цена: {price}
-    - Рейтинг: {rating}
-    - Отзывы: {reviews}
-    - Сложность: {difficulty}
-    - Текущая оценка (если есть): {valuate if valuate else 'Не указана'}
+    - Название: {course_data['name']}
+    - Описание: {course_data['description']}
+    - Цена: {course_data['price']} ₽
+    - Рейтинг: {course_data['rating']}
+    - Количество отзывов: {course_data['reviews']}
+    - Уровень сложности: {course_data['difficulty']}
+    - Текущая оценка: {course_data['valuate'] if course_data['valuate'] else 'Не указана'}
 
-    Проанализируйте тематику курса на основе названия и описания, определите, что это за тематика (например, "Программирование на Python").  
-    Также определите уровень курса (начальный, средний или продвинутый) на основе описания и сложности.  
-    Дайте общую оценку от 0 до 100, основываясь на качестве названия, описания, разумности цены, 
-    рейтинга, количества отзывов, сложности и тематики проекта.  
+    Проанализируйте тематику курса на основе названия и описания (например, "Программирование на Python").
+    Определите уровень курса (начальный, средний, продвинутый) на основе описания и сложности.
+    Дайте общую оценку от 0 до 100, учитывая качество названия, описания, разумность цены, рейтинг, количество отзывов и сложность.
     В ответе укажите:
     1. Числовую оценку (от 0 до 100).
-    2. Тематику проекта (например, "Python").
-    3. Уровень курса (начальный, средний или продвинутый) с кратким объяснением.
+    2. Тематику курса.
+    3. Уровень курса (выберите из трех вариантов: начальный, средний или продвинутый) с кратким объяснением.
     """
     return prompt
 
@@ -43,25 +74,26 @@ def get_rating_from_chatgpt(prompt):
             raise ValueError("Ответ модели не содержит всех требуемых частей")
 
         rating = float(lines[0].strip())
-        if not 0 <= rating <= 100:
-            raise ValueError("Оценка должна быть в диапазоне от 0 до 100")
-
         theme = lines[1].strip()
         level = '\n'.join(lines[2:]).strip()
-
         return rating, theme, level
 
-    except openai.error.OpenAIError as e:
-        print(f"Ошибка API OpenAI: {e}")
-        return None, None, None
-    except ValueError as e:
-        print(f"Ошибка обработки ответа: {e}")
-        return None, None, None
     except Exception as e:
-        print(f"Неожиданная ошибка: {e}")
+        print(f"Ошибка: {e}")
         return None, None, None
 
-def analyze_course(course_data):
-    name, description, price, rating, reviews, difficulty, valuate = course_data
-    prompt = create_prompt(name, description, price, rating, reviews, difficulty, valuate)
-    return get_rating_from_chatgpt(prompt)
+def calculate_rating(course_data):
+    prompt = create_prompt(course_data)
+    rating, theme, level = get_rating_from_chatgpt(prompt)
+    return rating, theme, level
+
+if __name__ == "__main__":
+    course_data = get_data_from_db()
+    if course_data:
+        rating, theme, level = calculate_rating(course_data)
+        if rating is not None:
+            print(f"Оценка: {rating}")
+            print(f"Тематика: {theme}")
+            print(f"Уровень: {level}")
+        else:
+            print("Не удалось получить оценку")

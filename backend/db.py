@@ -22,20 +22,20 @@ def init_db():
     cursor.close()
     conn.close()
 
-def add_course_to_db(course_data: dict) -> int:
+def add_course_to_db(course_data: Dict) -> int:
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("""
-            INSERT INTO courses (name, description, price, rating, reviews, difficulty, valuate)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
+        INSERT INTO courses (name, description, price, rating, reviews, difficulty, valuate)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
         course_data['name'],
         course_data['description'],
         course_data['price'],
         course_data['rating'],
         course_data['reviews'],
         course_data['difficulty'],
-        course_data['valuate']
+        course_data.get('valuate', '0')  # Значение по умолчанию
     ))
     course_id = cursor.lastrowid
     conn.commit()
@@ -43,10 +43,5 @@ def add_course_to_db(course_data: dict) -> int:
     conn.close()
     return course_id
 
-def get_course_data(course_id: int):
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("SELECT name, description, price, rating, reviews, difficulty, valuate FROM courses WHERE id = ?", (course_id,))
-    data = cursor.fetchone()
-    conn.close()
-    return data
+if __name__ == "__main__":
+    init_db()
