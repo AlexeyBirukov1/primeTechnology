@@ -1,6 +1,3 @@
-// popup.js
-
-// Элементы интерфейса
 const stepikMode = document.getElementById('stepikMode');
 const otherSiteMode = document.getElementById('otherSiteMode');
 const compareButton = document.getElementById('compareButton');

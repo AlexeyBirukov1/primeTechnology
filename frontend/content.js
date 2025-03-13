@@ -1,55 +1,82 @@
 // content.js
-
 // Функция для сбора данных о курсе
 function collectCourseData() {
-  const courseTitle = document.querySelector('h1.course-title')?.innerText.trim() || 'Нет названия';
-  const courseDescription = document.querySelector('div.course-summary')?.innerText.trim() || 'Нет описания';
-  const coursePrice = document.querySelector('div.course-purchase-widget__price')?.innerText.trim() || 'Бесплатно';
-  const ratingStars = document.querySelector('div.course-rating__stars')?.getAttribute('aria-label') || 'Нет рейтинга';
-  const reviewsCount = document.querySelector('div.course-rating__reviews')?.innerText.trim() || 'Нет отзывов';
-  const courseLevel = document.querySelector('div.course-sidebar__category')?.innerText.trim() || 'Неизвестно';
+  const courseTitle = document.querySelector('h1.course-promo__header')?.innerText.trim() || 'Нет названия';
+  const courseDescription = document.querySelector('p.course-promo__summary .shortened-text')?.innerText.trim() || 'Нет описания';
 
+  const priceElement = document.querySelector('span.display-price__price');
+  const coursePrice = priceElement ? priceElement.querySelector('.format-price')?.innerText.trim().replace('₽', '').replace(/\s/g, '') : '0.0';
+
+  const ratingElement = document.querySelector('span.course-promo-summary__average');
+  const ratingStars = ratingElement ? ratingElement.innerText.trim() : '0.0';
+
+  const reviewsElement = document.querySelector('a.course-promo-summary__reviews-count');
+  const courseReviews = reviewsElement ? reviewsElement.innerText.trim().match(/\d+/g)?.join('') || '0' : '0';
+
+  const levelElement = document.querySelector('div.course-promo__head-widget[data-type="difficulty"]');
+  const courseLevel = levelElement ? levelElement.textContent.trim().replace(levelElement.querySelector('span')?.textContent.trim() || '', '').trim() : 'Неизвестно';
+
+  const courseVal = "0"
   return {
-    title: courseTitle,
+    name: courseTitle,
     description: courseDescription,
     price: coursePrice,
     rating: ratingStars,
-    reviews: reviewsCount,
-    level: courseLevel
+    reviews: courseReviews,
+    difficulty: courseLevel,
+    valuate: courseVal
   };
 }
 
 // Функция для сбора данных о курсах из каталога
 function collectCatalogData() {
-  const courses = [];
+  console.log('content.js загружен');
+  let courses = [];
   document.querySelectorAll('div.course-card').forEach(card => {
-    const title = card.querySelector('h3.course-card__title')?.innerText.trim() || 'Нет названия';
-    const description = card.querySelector('div.course-card__description')?.innerText.trim() || 'Нет описания';
-    const price = card.querySelector('div.course-card__price')?.innerText.trim() || 'Бесплатно';
-    const rating = card.querySelector('div.course-card__rating')?.innerText.trim() || 'Нет рейтинга';
-    const reviews = card.querySelector('div.course-card__reviews')?.innerText.trim() || 'Нет отзывов';
-    const level = card.querySelector('div.course-card__level')?.innerText.trim() || 'Неизвестно';
+    const catalogTitle = card.querySelector('a.course-card__title')?.innerText.trim() || 'Нет названия';
+    const catalogDescription = card.querySelector('span.course-card__summary .shortened-text')?.innerText.trim() || 'Нет описания';
+    const catalogPrice = card.querySelector('span.course-card__price .display-price__price')?.innerText.trim() || '0.0';
+    const ratingElement = card.querySelector('span.course-card__widget[data-type="rating"] > span:nth-child(2)');
+    const catalogRating = ratingElement ? ratingElement.innerText.trim().split(' ')[0] : '0.0'; // Берем "4.9" из "4.9 (168)"
+
+    const catalogReviews = ratingElement ? ratingElement.innerText.trim().split(' ')[1] : '0'; // Берем "4.9" из "4.9 (168)"
+
+    const catalogLevel = card.querySelector('div.course-card__level')?.innerText.trim() || 'Неизвестно';
+    const courseVal = "0";
+    console.log(catalogTitle);
 
     courses.push({
-      title,
-      description,
-      price,
-      rating,
-      reviews,
-      level
+      name: catalogTitle,
+      description: catalogDescription,
+      price: catalogPrice,
+      rating: catalogRating,
+      reviews: catalogReviews,
+      difficulty: catalogLevel,
+      valuate: courseVal
     });
   });
-
   return courses;
 }
 
 // Проверяем, находимся ли мы на странице курса или каталога
 if (window.location.href.includes('/course/')) {
   // Если это страница курса, собираем данные
-  const courseData = collectCourseData();
-  chrome.runtime.sendMessage({ action: 'collectData', data: courseData });
+  setTimeout(() => {
+    const courseData = collectCourseData();
+    chrome.runtime.sendMessage({ action: 'collectData', data: courseData });
+  }, 3000);
 } else if (window.location.href.includes('/catalog/')) {
-  // Если это каталог, собираем данные о всех курсах
-  const catalogData = collectCatalogData();
-  chrome.runtime.sendMessage({ action: 'collectCatalogData', data: catalogData });
+  setTimeout(() => {
+    const catalogData = collectCatalogData();
+    console.log('Данные каталога после задержки:', catalogData);
+    catalogData.forEach(course => {
+      chrome.runtime.sendMessage({ action: 'collectData', data: course });
+    });
+  }, 8000);
 }
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'collectCourseData') {
+    const courseData = collectCourseData();
+    sendResponse({ data: courseData });
+  }
+});

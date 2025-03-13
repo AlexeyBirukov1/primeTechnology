@@ -12,9 +12,9 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             description TEXT,
-            price REAL,
-            rating REAL,
-            reviews INTEGER,
+            price TEXT,
+            rating TEXT,
+            reviews TEXT,
             difficulty TEXT,
             valuate TEXT
         )
@@ -30,8 +30,12 @@ def add_course_to_db(course_data: dict) -> int:
             INSERT INTO courses (name, description, price, rating, reviews, difficulty, valuate)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
-        course_data['name'], course_data['description'], course_data['price'],
-        course_data['rating'], course_data['reviews'], course_data['difficulty'],
+        course_data['name'],
+        course_data['description'],
+        course_data['price'],
+        course_data['rating'],
+        course_data['reviews'],
+        course_data['difficulty'],
         course_data['valuate']
     ))
     course_id = cursor.lastrowid

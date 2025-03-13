@@ -2,17 +2,32 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from .db import add_course_to_db, DB_FILE, init_db
 import sqlite3
+import logging
 from .gptanalysis import analyze_course
+from fastapi.middleware.cors import CORSMiddleware
 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешить все источники (для тестов) или укажите "chrome-extension://<your-extension-id>"
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 init_db()
 
 class Course(BaseModel):
     name: str
     description: str
-    price: float
-    rating: float
-    reviews: int
+    price: str
+    rating: str
+    reviews: str
     difficulty: str
     valuate: str
 
@@ -22,7 +37,9 @@ async def add_course(course: Course):
     # valuate = analyze_course() or "12/10"  # Заглушка, если GPT не работает
     valuate = None
     course_data = course.dict()
+    # Поле 'valuate' пока оставляем как None, если GPT не используется
     course_data['valuate'] = valuate
+    logger.info(course_data)
     # Добавление в базу
     course_id = add_course_to_db(course_data)
     return {"message": f"Курс {course.name} добавлен с ID {course_id}"}
