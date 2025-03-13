@@ -1,27 +1,24 @@
-// background.js
-
-// Обработчик сообщений от popup.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'evaluateCourse') {
-    // Отправляем данные на backend
+    console.log('Получены данные для отправки:', message.data);
     fetch('http://127.0.0.1:8000/add_course', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(message.data)
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log('Статус ответа сервера:', response.status);
+      if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
+      return response.json();
+    })
     .then(data => {
-      // Возвращаем оценку курса и данные рекомендуемого курса
+      console.log('Ответ от сервера:', data);
       sendResponse(data);
     })
     .catch(error => {
-      console.error('Ошибка при отправке данных:', error);
-      sendResponse(null);
+      console.error('Ошибка:', error);
+      sendResponse({ error: error.message });
     });
-
-    // Возвращаем true для асинхронного ответа
     return true;
   }
 });

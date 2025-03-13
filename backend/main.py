@@ -7,11 +7,11 @@ app = FastAPI()
 
 class Course(BaseModel):
     name: str
-    desc: str
-    site: str
+    description: str
     price: float
     rating: float
-    year: int
+    reviews: int
+    difficulty: str
     valuate: str
 
 @app.post("/add_course")
