@@ -3,7 +3,6 @@ from typing import Dict
 
 DB_FILE = "courses.sqlite"
 
-
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -44,5 +43,10 @@ def add_course_to_db(course_data: dict) -> int:
     conn.close()
     return course_id
 
-if __name__ == "__main__":
-    init_db()
+def get_course_data(course_id: int):
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, description, price, rating, reviews, difficulty, valuate FROM courses WHERE id = ?", (course_id,))
+    data = cursor.fetchone()
+    conn.close()
+    return data
