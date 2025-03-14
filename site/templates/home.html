@@ -1,0 +1,124 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1>Добро пожаловать в <span class="highlight">Course</span>!</h1>
+    <p>Наше расширение помогает вам находить <span class="highlight">лучшие курсы</span> с легкостью. Сравнивайте цены, читайте отзывы и сохраняйте свои любимые варианты.</p>
+    <div class="hero-decor">
+        <span class="decor-icon">✨</span>
+    </div>
+</div>
+
+<div class="card">
+    <h2><span class="icon icon-primary">📚</span>О нашем приложении</h2>
+    <p>Course — это мощное расширение для браузера, разработанное командой Bezdari. Мы стремимся упростить процесс выбора курсов, предоставляя вам инструменты для сравнения цен, анализа отзывов и сохранения истории поиска с помощью встроенного ИИ. Наша миссия — сделать обучение доступным и удобным для всех.</p>
+    <h3><span class="icon icon-secondary">⭐</span>Почему выбирают нас?</h3>
+    <ul>
+        <li><span class="icon icon-primary">💰</span>Быстрое сравнение цен на сотни курсов</li>
+        <li><span class="icon icon-secondary">👥</span>Подробные отзывы от реальных пользователей</li>
+        <li><span class="icon icon-tertiary">🎨</span>Интуитивно понятный интерфейс</li>
+        <li><span class="icon icon-quaternary">⏳</span>Сохранение истории для удобства</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2><span class="icon icon-primary">🎯</span>Сравнение возможностей</h2>
+    <div class="comparison-cards">
+        <!-- Карточка "Базовый доступ" -->
+        <div class="comparison-card">
+            <div class="plan-header free">
+                <h3>Базовый доступ</h3>
+            </div>
+            <div class="plan-details">
+                <span class="icon icon-secondary">🆓</span>
+                <h4>Без регистрации</h4>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="feature-icon-small">💰</span>
+                        <span class="feature-label">Сравнение цен курсов</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">👥</span>
+                        <span class="feature-label">Доступ к отзывам</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">🤖</span>
+                        <span class="feature-label">ИИ-анализ курсов</span>
+                        <span class="check">✔</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Карточка "Полный доступ" -->
+        <div class="comparison-card">
+            <div class="plan-header registered">
+                <h3>Полный доступ</h3>
+            </div>
+            <div class="plan-details">
+                <span class="icon icon-primary">🔑</span>
+                <h4>С регистрацией</h4>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="feature-icon-small">💰</span>
+                        <span class="feature-label">Сравнение цен курсов</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">👥</span>
+                        <span class="feature-label">Доступ к отзывам</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">🤖</span>
+                        <span class="feature-label">ИИ-анализ курсов</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">💾</span>
+                        <span class="feature-label">Сохранение истории поиска</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">🔍</span>
+                        <span class="feature-label">Расширенные фильтры</span>
+                        <span class="check">✔</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon-small">🎯</span>
+                        <span class="feature-label">Персональные рекомендации</span>
+                        <span class="check">✔</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <h2><span class="icon">💬</span>Что говорят о нас</h2>
+    <div class="comments">
+        <div class="comment-card">
+            <div class="comment-header">
+                <span class="avatar">😊</span>
+                <span class="user-name">Анна С.</span>
+            </div>
+            <blockquote class="comment-text">"Отличное расширение! Сравнение курсов стало намного проще. Рекомендую всем!"</blockquote>
+        </div>
+        <div class="comment-card">
+            <div class="comment-header">
+                <span class="avatar">🌟</span>
+                <span class="user-name">Иван П.</span>
+            </div>
+            <blockquote class="comment-text">"Удобный интерфейс и точные данные. Сэкономил кучу времени на выборе курса!"</blockquote>
+        </div>
+        <div class="comment-card">
+            <div class="comment-header">
+                <span class="avatar">😍</span>
+                <span class="user-name">Мария К.</span>
+            </div>
+            <blockquote class="comment-text">"Хороший сервис, но можно добавить больше фильтров."</blockquote>
+        </div>
+    </div>
+</div>
+{% endblock %}
