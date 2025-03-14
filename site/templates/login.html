@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2 class="title"><span class="icon">🔑</span> Вход</h2>
+        <!-- Удаляем или комментируем блок flash messages -->
+        <!--
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        -->
+        <form method="POST" class="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-container">
+                    <span class="icon-input">📧</span>
+                    <input type="email" id="email" name="email" placeholder="Введите ваш email" required>
+                </div>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Пароль</label>
+                <div class="input-container">
+                    <span class="icon-input">🔒</span>
+                    <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+                    <span class="toggle-password" onclick="togglePassword('password')">
+                        <svg class="eye-icon show-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-icon hide-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <button type="submit" class="auth-btn">Войти</button>
+        </form>
+        <p class="signup-link">Нет аккаунта? <a href="{{ url_for('register') }}">Зарегистрируйтесь</a></p>
+    </div>
+</div>
+
+<style>
+    body {
+        background: #2a5298; /* Синий фон для всей страницы */
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem;
+    }
+
+    .card {
+        background: #ffffff; /* Белый фон для карточки */
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+        color: #2a5298; /* Темно-синий цвет для заголовка */
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+    }
+
+    .icon {
+        margin-right: 0.5rem;
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333; /* Темный текст для меток */
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .icon-input {
+        position: absolute;
+        left: 10px;
+        color: #666; /* Серый цвет для иконок */
+        font-size: 1.2rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        outline: none;
+        color: #333; /* Темный текст в полях ввода */
+    }
+
+    .form-group input:focus {
+        border-color: #FFA500;
+        box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+    }
+
+    .form-group input::placeholder {
+        color: #999; /* Светлый текст для плейсхолдеров */
+    }
+
+    .password-group {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    .toggle-password:hover .eye-icon {
+        stroke: #FFA500;
+    }
+
+    .auth-btn {
+        background: #FFA500; /* Оранжевый фон для кнопки */
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.5rem 1rem; /* Уменьшенный padding для меньшего размера кнопки */
+        border: none;
+        border-radius: 4px; /* Меньшая закругленность углов */
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+        width: 100%; /* Ширина кнопки на всю доступную ширину */
+    }
+
+    .auth-btn:hover {
+        background: #e59400; /* Темнее оранжевый при наведении */
+    }
+
+    .signup-link {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .signup-link a {
+        color: #FFA500;
+        text-decoration: none;
+    }
+
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const toggle = input.nextElementSibling;
+        const showIcon = toggle.querySelector('.show-icon');
+        const hideIcon = toggle.querySelector('.hide-icon');
+        if (input.type === "password") {
+            input.type = "text";
+            showIcon.style.display = "none";
+            hideIcon.style.display = "inline";
+        } else {
+            input.type = "password";
+            showIcon.style.display = "inline";
+            hideIcon.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

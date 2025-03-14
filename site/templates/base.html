@@ -1,0 +1,479 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Compare</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #1a252f;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+        .logo {
+            color: #FFA500;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .nav-links a:hover {
+            background: #2c3e50;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-right: 1rem;
+        }
+        .auth-btn {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #FFA500;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .auth-btn:hover {
+            background: #FFA500;
+            color: #ffffff;
+        }
+        .content {
+        padding: 2rem;
+        flex-grow: 1;
+        margin-top: 70px; /* Отступ, соответствующий высоте шапки (примерно 60-70px) */
+    }
+       .hero {
+    position: relative; /* Для позиционирования декоративных элементов */
+    background: linear-gradient(135deg, #FFA500, #FF8C00, #FF6347); /* Более сложный градиент */
+    color: #ffffff;
+    padding: 4rem 2rem; /* Увеличим внутренние отступы */
+    text-align: center;
+    border-radius: 15px; /* Более мягкие углы */
+    margin-bottom: 2rem;
+    overflow: hidden; /* Для декоративных элементов */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Добавим тень */
+}
+
+/* Эффект наложения текстуры (можно добавить через псевдоэлемент) */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 10px 10px; /* Легкий шум */
+    opacity: 0.3;
+}
+
+/* Стили для заголовка */
+.hero h1 {
+    font-size: 3rem; /* Увеличим размер */
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Тень для текста */
+    animation: fadeInDown 1s ease-in-out; /* Анимация появления */
+}
+
+/* Выделение ключевых слов */
+.hero .highlight {
+    background: linear-gradient(90deg, #ffffff, #ffff00); /* Градиентный текст */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+/* Стили для текста */
+.hero p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1.5s ease-in-out; /* Анимация появления */
+}
+
+/* Стили для кнопки */
+.hero-btn {
+    display: inline-block;
+    background: #ffffff;
+    color: #FFA500;
+    padding: 0.75rem 2rem;
+    border-radius: 25px; /* Скругленные углы */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 2s ease-in-out; /* Анимация появления */
+}
+
+.hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: #FFD700; /* Легкий желтый при наведении */
+    color: #ffffff;
+}
+
+/* Декоративный элемент */
+.hero-decor {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    opacity: 0.2;
+}
+
+.decor-icon {
+    font-size: 5rem;
+    animation: sparkle 3s infinite ease-in-out;
+}
+
+/* Анимации */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.2;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.5;
+    }
+}
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto 2rem;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn {
+            background: #FFA500;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #FF8C00;
+        }
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px; /* Размер сохраняем для выравнивания */
+            height: 50px;
+            font-size: 1.8rem; /* Размер эмодзи */
+            margin-right: 1.2rem; /* Отступ справа */
+            transition: transform 0.3s ease; /* Плавная анимация */
+        }
+
+        .icon:hover {
+            transform: scale(1.1); /* Увеличение при наведении */
+        }
+        .comments {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .comment-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            width: 300px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: left;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-left: 4px solid #FFA500;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        background: none;
+        color: #FFA500;
+        flex-shrink: 0;
+    }
+        .user-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        .comment-text {
+            color: #666;
+            margin: 0;
+            padding-left: 1rem;
+            font-style: italic;
+        }
+        blockquote.comment-text {
+            border-left: 2px solid #FF8C00;
+            padding-left: 1rem;
+        }
+        .instruction-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        /* Стили для таблицы сравнения */
+        .comparison-cards {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-card {
+            text-align: center;
+            width: 300px;
+            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .plan-header {
+            padding: 1.5rem;
+            color: #ffffff;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+            z-index: 1;
+        }
+
+        .plan-header.free {
+            background: linear-gradient(135deg, #6ab7f5, #4a90e2);
+        }
+
+        .plan-header.registered {
+            background: linear-gradient(135deg, #ffca28, #f5a623);
+        }
+
+        .plan-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plan-details {
+            padding: 2rem 1.5rem;
+            border-radius: 0 0 15px 15px;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .plan-details h4 {
+            margin: 0.5rem 0;
+            font-size: 1.3rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .rating {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stars {
+            color: #f5a623;
+        }
+
+        .platforms {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .features-list {
+            text-align: left;
+            padding: 0 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s ease;
+        }
+
+        .feature-item:hover {
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .feature-icon-small {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+            color: #4a90e2;
+        }
+
+        .feature-label {
+            flex: 1;
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .check {
+            color: #2ecc71;
+            font-size: 1.5rem;
+        }
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #FFA500;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            background: #1a252f;
+            color: #ffffff;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+    <div style="display: flex; align-items: center;">
+        <a href="{{ url_for('home') }}" class="logo">Course</a>
+        <div class="nav-links">
+            <a href="{{ url_for('how_to_use') }}">Как использовать</a>
+            {% if 'user_id' in session %}
+                <a href="{{ url_for('user_history') }}">История</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="auth-buttons">
+        {% if 'user_id' in session %}
+            <a href="{{ url_for('user_profile') }}" class="auth-btn">Профиль</a> <!-- Изменено с 'profile' на 'user_profile' -->
+            <a href="{{ url_for('perform_logout') }}" class="auth-btn">Выйти</a>
+        {% else %}
+            <a href="{{ url_for('user_login') }}" class="auth-btn">Вход</a>
+            <a href="{{ url_for('register') }}" class="auth-btn">Регистрация</a>
+        {% endif %}
+    </div>
+    </div>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+        Все права защищены © 2025 Course
+    </div>
+</body>
+</html>

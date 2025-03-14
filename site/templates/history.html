@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2><span class="icon">📜</span>История поиска</h2>
+    {% if searches %}
+        <div class="history-list">
+            {% for search in searches %}
+                <div class="history-item">
+                    <span class="icon">📚</span>
+                    <span class="course-name">{{ search.course_name }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Вы еще не искали курсы</p>
+    {% endif %}
+    <div class="history-actions">
+    <a href="{{ url_for('user_profile') }}" class="btn">Вернуться в профиль</a> <!-- Уже корректно, но проверьте -->
+    </div>
+</div>
+
+<style>
+    .history-list {
+        margin: 2rem 0;
+    }
+    .history-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+    }
+    .history-item:hover {
+        background: #f9f9f9;
+    }
+    .course-name {
+        margin-left: 1rem;
+        color: #333;
+    }
+    .history-actions {
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
