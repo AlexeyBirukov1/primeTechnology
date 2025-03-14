@@ -17,6 +17,8 @@ function collectCourseData() {
   const courseLevel = levelElement ? levelElement.textContent.trim().replace(levelElement.querySelector('span')?.textContent.trim() || '', '').trim() : 'Неизвестно';
 
   const courseVal = "0"
+
+  const courseUrl = window.location.href
   return {
     name: courseTitle,
     description: courseDescription,
@@ -24,7 +26,8 @@ function collectCourseData() {
     rating: ratingStars,
     reviews: courseReviews,
     difficulty: courseLevel,
-    valuate: courseVal
+    valuate: courseVal,
+    link: courseUrl
   };
 }
 
@@ -43,6 +46,8 @@ function collectCatalogData() {
 
     const catalogLevel = card.querySelector('div.course-card__level')?.innerText.trim() || 'Неизвестно';
     const courseVal = "0";
+
+    const catalogUrl = card.querySelector('a.course-card__title')?.href || "Нет ссылки";
     console.log(catalogTitle);
 
     courses.push({
@@ -52,7 +57,8 @@ function collectCatalogData() {
       rating: catalogRating,
       reviews: catalogReviews,
       difficulty: catalogLevel,
-      valuate: courseVal
+      valuate: courseVal,
+      link: catalogUrl
     });
   });
   return courses;

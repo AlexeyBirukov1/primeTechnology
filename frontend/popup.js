@@ -1,102 +1,120 @@
-const stepikMode = document.getElementById('stepikMode');
-const otherSiteMode = document.getElementById('otherSiteMode');
+// popup.js
+
+// Элементы интерфейса
+const catalogMode = document.getElementById('catalogMode');
+const courseMode = document.getElementById('courseMode');
 const compareButton = document.getElementById('compareButton');
-const compareButtonOtherSite = document.getElementById('compareButtonOtherSite');
-const courseRating = document.getElementById('courseRating');
-const courseRatingValue = document.getElementById('courseRatingValue');
+const compareButtonCourse = document.getElementById('compareButtonCourse');
+const currentCourseRating = document.getElementById('currentCourseRating');
+const currentRatingValue = document.getElementById('currentRatingValue');
 const recommendedCourse = document.getElementById('recommendedCourse');
 const recommendedTitle = document.getElementById('recommendedTitle');
 const recommendedDescription = document.getElementById('recommendedDescription');
 const recommendedPrice = document.getElementById('recommendedPrice');
 const recommendedRating = document.getElementById('recommendedRating');
 const recommendedNeuralRating = document.getElementById('recommendedNeuralRating');
-const levelButtons = document.querySelectorAll('.level-button');
+
+// Массив для хранения выбранных уровней
+let selectedLevels = [];
+
+// Обработчик нажатия кнопок уровней
+document.querySelectorAll('.level-button').forEach(button => {
+  button.addEventListener('click', () => {
+    // Переключаем состояние кнопки
+    button.classList.toggle('active');
+
+    // Добавляем или удаляем уровень из массива selectedLevels
+    const level = button.id;
+    if (button.classList.contains('active')) {
+      selectedLevels.push(level);
+    } else {
+      selectedLevels = selectedLevels.filter(item => item !== level);
+    }
+
+    console.log('Выбранные уровни:', selectedLevels); // Отладочное сообщение
+  });
+});
 
 // Определяем, на каком сайте находится пользователь
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const url = tabs[0].url;
 
-  if (url.includes('stepik.org')) {
-    // Режим для Stepik
-    stepikMode.classList.remove('hidden');
-  } else {
-    // Режим для других сайтов
-    otherSiteMode.classList.remove('hidden');
+  if (url.includes('stepik.org/catalog/')) {
+    // Режим для каталога
+    catalogMode.style.display = 'block';
+    courseMode.style.display = 'none';
+  } else if (url.includes('/course/')) {
+    // Режим для страницы курса
+    catalogMode.style.display = 'none';
+    courseMode.style.display = 'block';
   }
 });
 
-// Обработчик нажатия кнопок уровней
-levelButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Переключаем состояние кнопки
-    button.classList.toggle('active');
-  });
-});
-
-// Обработчик нажатия кнопки "Сравнить" для Stepik
+// Обработчик нажатия на кнопку "Сравнить" в режиме каталога
 compareButton.addEventListener('click', () => {
-  const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
-  const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
-
-  // Собираем выбранные уровни
-  const selectedLevels = [];
-  levelButtons.forEach(button => {
-    if (button.classList.contains('active')) {
-      selectedLevels.push(button.id);
-    }
-  });
+  const minPrice = parseInt(document.getElementById('minPrice').value) || 0; // Используем parseInt вместо parseFloat
+  const maxPriceInput = document.getElementById('maxPrice').value;
+  const maxPrice = maxPriceInput ? parseInt(maxPriceInput) : 999999; // Устанавливаем разумный максимум вместо Infinity
 
   if (selectedLevels.length === 0) {
     alert('Пожалуйста, выберите хотя бы один уровень курса.');
     return;
   }
-
-  // Отправляем данные в background.js
-  chrome.runtime.sendMessage({
-    action: 'applyFilters',
-    filters: {
-      minPrice,
-      maxPrice,
-      levels: selectedLevels
+  console.log('Sending request:', {
+  min_price: minPrice,
+  max_price: maxPrice,
+  difficulties: selectedLevels
+});
+  fetch('http://127.0.0.1:8000/get_recommended_course', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      min_price: minPrice,       // Приводим к ожидаемому имени
+      max_price: maxPrice,       // Приводим к ожидаемому имени
+      difficulties: selectedLevels // Используем "difficulties" вместо "levels"
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    return response.json();
+  })
+  .then(data => {
+    recommendedCourse.classList.remove('hidden');
+    recommendedTitle.textContent = data.recommendedCourse.title;
+    recommendedDescription.textContent = data.recommendedCourse.description;
+    recommendedPrice.textContent = data.recommendedCourse.price;
+    recommendedRating.textContent = data.recommendedCourse.rating;
+    recommendedNeuralRating.textContent = data.recommendedCourse.neuralRating;
+  })
+  .catch(error => {
+    console.error('Ошибка при запросе данных:', error);
   });
-
-  // Закрываем popup
-  window.close();
 });
 
-// Обработчик нажатия кнопки "Сравнить" для других сайтов
-compareButtonOtherSite.addEventListener('click', () => {
-  // Собираем данные о курсе
+// Обработчик нажатия на кнопку "Сравнить" в режиме страницы курса
+compareButtonCourse.addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action: 'collectCourseData' }, (response) => {
-      if (response && response.data) {
-        // Отправляем данные на backend
-        chrome.runtime.sendMessage(
-          { action: 'evaluateCourse', data: response.data },
-          (backendResponse) => {
-            if (backendResponse) {
-              // Отображаем оценку курса
-              courseRating.classList.remove('hidden');
-              courseRatingValue.textContent = backendResponse.courseRating;
+    const url = tabs[0].url;
 
-              // Отображаем карточку рекомендуемого курса
-              recommendedCourse.classList.remove('hidden');
-              recommendedTitle.textContent = backendResponse.recommendedCourse.title;
-              recommendedDescription.textContent = backendResponse.recommendedCourse.description;
-              recommendedPrice.textContent = backendResponse.recommendedCourse.price;
-              recommendedRating.textContent = backendResponse.recommendedCourse.rating;
-              recommendedNeuralRating.textContent = backendResponse.recommendedCourse.neuralRating;
-            } else {
-              courseRating.classList.remove('hidden');
-              courseRatingValue.textContent = 'Ошибка';
-            }
-          }
-        );
-      } else {
-        courseRating.classList.remove('hidden');
-        courseRatingValue.textContent = 'Не удалось собрать данные';
+    // Запрашиваем оценку текущего курса у backend
+    fetch(`http://127.0.0.1:8000/get_course_evaluation?link=${encodeURIComponent(url)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
       }
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Отображаем оценку текущего курса
+      currentCourseRating.classList.remove('hidden');
+      currentRatingValue.textContent = data.currentCourseRating;
+    })
+    .catch(error => {
+      console.error('Ошибка при запросе данных:', error);
     });
   });
 });

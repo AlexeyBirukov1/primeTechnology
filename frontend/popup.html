@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Course Recommender</title>
+  <title>Stepik Course Recommender</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <!-- Режим для Stepik -->
-  <div id="stepikMode" class="hidden">
+  <!-- Режим для каталога -->
+  <div id="catalogMode">
     <h1>Введите параметры сравнения:</h1>
 
     <!-- Поле для ввода ценового диапазона -->
@@ -19,41 +19,36 @@
 
     <!-- Кнопки для выбора уровня курса -->
     <div class="level-buttons">
-      <button id="beginner" class="level-button">Начальный</button>
-      <button id="intermediate" class="level-button">Средний</button>
-      <button id="advanced" class="level-button">Продвинутый</button>
+      <button id="Начальный" class="level-button">Начальный</button>
+      <button id="Средний" class="level-button">Средний</button>
+      <button id="Продвинутый" class="level-button">Продвинутый</button>
     </div>
 
     <!-- Кнопка "Сравнить" -->
     <button id="compareButton">Сравнить</button>
-
-    <!-- Поле для отображения оценки нейросети (скрыто по умолчанию) -->
-    <div id="neuralRating" class="neural-rating hidden">
-      <strong>Оценка нейросети:</strong> <span id="ratingValue">—</span>
-    </div>
   </div>
 
-  <!-- Режим для других сайтов -->
-  <div id="otherSiteMode" class="hidden">
+  <!-- Режим для страницы курса -->
+  <div id="courseMode" class="hidden">
     <h1>Оценить курс</h1>
 
     <!-- Кнопка "Сравнить" -->
-    <button id="compareButtonOtherSite">Сравнить</button>
+    <button id="compareButtonCourse">Сравнить</button>
+  </div>
 
-    <!-- Поле для отображения оценки курса -->
-    <div id="courseRating" class="neural-rating hidden">
-      <strong>Оценка курса:</strong> <span id="courseRatingValue">—</span>
-    </div>
+  <!-- Поле для отображения оценки текущего курса (скрыто по умолчанию) -->
+  <div id="currentCourseRating" class="neural-rating hidden">
+    <strong>Оценка текущего курса:</strong> <span id="currentRatingValue">—</span>
+  </div>
 
-    <!-- Карточка рекомендуемого курса -->
-    <div id="recommendedCourse" class="hidden">
-      <h2>Рекомендуемый курс</h2>
-      <p><strong>Название:</strong> <span id="recommendedTitle">—</span></p>
-      <p><strong>Описание:</strong> <span id="recommendedDescription">—</span></p>
-      <p><strong>Цена:</strong> <span id="recommendedPrice">—</span></p>
-      <p><strong>Рейтинг:</strong> <span id="recommendedRating">—</span></p>
-      <p><strong>Оценка нейросети:</strong> <span id="recommendedNeuralRating">—</span></p>
-    </div>
+  <!-- Карточка рекомендуемого курса (скрыта по умолчанию) -->
+  <div id="recommendedCourse" class="hidden">
+    <h2>Рекомендуемый курс</h2>
+    <p><strong>Название:</strong> <span id="recommendedTitle">—</span></p>
+    <p><strong>Описание:</strong> <span id="recommendedDescription">—</span></p>
+    <p><strong>Цена:</strong> <span id="recommendedPrice">—</span></p>
+    <p><strong>Рейтинг:</strong> <span id="recommendedRating">—</span></p>
+    <p><strong>Оценка нейросети:</strong> <span id="recommendedNeuralRating">—</span></p>
   </div>
 
   <script src="popup.js"></script>

@@ -2,7 +2,7 @@ import logging
 import sqlite3
 from openai import OpenAI
 
-API_KEY = "ВСТАВЬТЕ СЮДА КЛЮЧ"  # Вставьте ключ OpenAI
+API_KEY = ""  # Вставьте ключ OpenAI
 client = OpenAI(api_key=API_KEY)
 
 logging.basicConfig(level=logging.INFO)
@@ -15,16 +15,16 @@ def get_data_from_db(course_id=None):
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
         if course_id:
-            cursor.execute("SELECT name, description, price, rating, reviews, difficulty, valuate FROM courses WHERE id = ?", (course_id,))
+            cursor.execute("SELECT name, theme, description, price, rating, reviews, difficulty, valuate, link FROM courses WHERE id = ?", (course_id,))
         else:
-            cursor.execute("SELECT name, description, price, rating, reviews, difficulty, valuate FROM courses LIMIT 1")
+            cursor.execute("SELECT name, theme, description, price, rating, reviews, difficulty, valuate, link FROM courses LIMIT 1")
         data = cursor.fetchone()
         conn.close()
 
         if data is None:
             raise ValueError("Нет данных в базе данных")
 
-        name, description, price, rating, reviews, difficulty, valuate = data
+        name, theme, description, price, rating, reviews, difficulty, valuate, link = data
         return {
             "name": name,
             "description": description,
@@ -32,7 +32,8 @@ def get_data_from_db(course_id=None):
             "rating": rating,
             "reviews": reviews,
             "difficulty": difficulty,
-            "valuate": valuate
+            "valuate": valuate,
+            "link": link
         }
 
     except sqlite3.Error as e:
