@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from .db import add_course_to_db, DB_FILE, init_db, get_best_course
+from .db import add_course_to_db, DB_FILE, init_db, get_best_course, get_theme_by_name
 from .gptanalysis import calculate_rating, get_data_from_db
 import sqlite3
 import logging
@@ -36,6 +36,7 @@ class BestCourseRequest(BaseModel):
     min_price: int
     max_price: int
     difficulties: List[str]
+    name: str
 
 def check_course_exists(course_name: str) -> bool:
     conn = sqlite3.connect(DB_FILE)
@@ -84,8 +85,9 @@ async def get_all_courses():
 
 @app.post("/get_recommended_course")
 async def get_recommended_course(request: BestCourseRequest):
-    logger.info(f"Received request: min_price={request.min_price}, max_price={request.max_price}, difficulties={request.difficulties}")
-    result = get_best_course(request.min_price, request.max_price, request.difficulties)
+    logger.info(f"Received request: min_price={request.min_price}, max_price={request.max_price}, difficulties={request.difficulties}, name={request.name}")
+    catalog_theme = get_theme_by_name(request.name)
+    result = get_best_course(request.min_price, request.max_price, request.difficulties, catalog_theme)
     if result:
         logger.info(f"Found course: {result}")
         return {

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Stepik Course Filter",
+  "name": "Course",
   "version": "1.0",
-  "description": "Расширение для сбора данных о курсах на Stepik и отправки их на backend.",
+  "description": "Расширение для сбора данных о курсах на Stepik и рекомендаций.",
   "permissions": [
     "activeTab",
     "scripting",

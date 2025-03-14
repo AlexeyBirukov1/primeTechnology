@@ -52,48 +52,66 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 
 // Обработчик нажатия на кнопку "Сравнить" в режиме каталога
 compareButton.addEventListener('click', () => {
+  //const catalogTitle = document.querySelectorAll('a.course-card__title')[1]?.innerText.trim();
   const minPrice = parseInt(document.getElementById('minPrice').value) || 0; // Используем parseInt вместо parseFloat
   const maxPriceInput = document.getElementById('maxPrice').value;
   const maxPrice = maxPriceInput ? parseInt(maxPriceInput) : 999999; // Устанавливаем разумный максимум вместо Infinity
-
+  //alert(catalogTitle);
   if (selectedLevels.length === 0) {
     alert('Пожалуйста, выберите хотя бы один уровень курса.');
     return;
   }
-  console.log('Sending request:', {
-  min_price: minPrice,
-  max_price: maxPrice,
-  difficulties: selectedLevels
-});
-  fetch('http://127.0.0.1:8000/get_recommended_course', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      min_price: minPrice,       // Приводим к ожидаемому имени
-      max_price: maxPrice,       // Приводим к ожидаемому имени
-      difficulties: selectedLevels // Используем "difficulties" вместо "levels"
-    })
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-    recommendedCourse.classList.remove('hidden');
-    recommendedTitle.textContent = data.recommendedCourse.title;
-    recommendedDescription.textContent = data.recommendedCourse.description;
-    recommendedPrice.textContent = data.recommendedCourse.price;
-    recommendedRating.textContent = data.recommendedCourse.rating;
-    recommendedNeuralRating.textContent = data.recommendedCourse.neuralRating;
-  })
-  .catch(error => {
-    console.error('Ошибка при запросе данных:', error);
-  });
-});
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      function: () => {
+        const elements = document.querySelectorAll('a.course-card__title');
+        console.log('Elements found:', elements.length, elements);
+        return elements[1]?.innerText.trim() || 'Нет названия';
+      }
+    }, (results) => {
+      const catalogTitle = results[0].result;
+      console.log('Catalog title from script:', catalogTitle);
+
+      console.log('Sending request:', {
+        min_price: minPrice,
+        max_price: maxPrice,
+        difficulties: selectedLevels,
+        name: catalogTitle
+      });
+      fetch('http://127.0.0.1:8000/get_recommended_course', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          min_price: minPrice,       // Приводим к ожидаемому имени
+          max_price: maxPrice,       // Приводим к ожидаемому имени
+          difficulties: selectedLevels, // Используем "difficulties" вместо "levels"
+          name: catalogTitle
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        recommendedCourse.classList.remove('hidden');
+        recommendedTitle.textContent = data.recommendedCourse.title;
+        recommendedDescription.textContent = data.recommendedCourse.description;
+        recommendedPrice.textContent = data.recommendedCourse.price;
+        recommendedRating.textContent = data.recommendedCourse.rating;
+        recommendedNeuralRating.textContent = data.recommendedCourse.neuralRating;
+      })
+      .catch(error => {
+        console.error('Ошибка при запросе данных:', error);
+      });
+    });
+  }); // Добавлена закрывающая скобка для chrome.tabs.query
+}); // Добавлена закрывающая скобка для compareButton.addEventListener
 
 // Обработчик нажатия на кнопку "Сравнить" в режиме страницы курса
 compareButtonCourse.addEventListener('click', () => {

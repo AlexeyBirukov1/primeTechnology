@@ -1,6 +1,6 @@
 import logging
 import sqlite3
-from typing import Dict
+from typing import Dict, Optional
 import re
 
 logging.basicConfig(level=logging.INFO)
@@ -60,7 +60,29 @@ def add_course_to_db(course_data: Dict) -> int:
     conn.close()
     return course_id
 
-def get_best_course(min_price: int, max_price: int, difficulties: list) -> dict:
+
+def get_theme_by_name(course_name: str) -> Optional[str]:
+    """
+    Возвращает тему курса по его названию.
+
+    Args:
+        course_name (str): Название курса для поиска.
+
+    Returns:
+        Optional[str]: Значение поля theme или None, если курс не найден.
+    """
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT theme FROM courses WHERE name = ?", (course_name,))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result["theme"] if result else None
+
+def get_best_course(min_price: int, max_price: int, difficulties: list, catalog_theme:str) -> dict:
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -70,14 +92,15 @@ def get_best_course(min_price: int, max_price: int, difficulties: list) -> dict:
         FROM courses
         WHERE price BETWEEN ? AND ?
           AND difficulty IN ({})
+          AND theme = ?
         ORDER BY valuate DESC
         LIMIT 1;
     """.format(", ".join("?" * len(difficulties)))
 
-    cursor.execute(query, (min_price, max_price, *difficulties))
+    cursor.execute(query, (min_price, max_price, *difficulties, catalog_theme))
     result = cursor.fetchone()
     conn.close()
-
+    logger.info(f"По запросу {min_price, max_price, difficulties, catalog_theme}, найдено было: {result}")
     if result:
         return dict(result)
     return None
