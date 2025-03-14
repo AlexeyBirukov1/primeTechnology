@@ -23,6 +23,7 @@ init_db()
 
 class Course(BaseModel):
     name: str
+    theme: str = "Не определена"
     description: str
     price: str
     rating: str
@@ -30,10 +31,21 @@ class Course(BaseModel):
     difficulty: str
     valuate: str = "0"
 
+def check_course_exists(course_name: str) -> bool:
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM courses WHERE name = ?", (course_name,))
+    result = cursor.fetchone()
+    conn.close()
+    return result is not None
 
 @app.post("/add_course")
 async def add_course(course: Course):
     course_data = course.dict()
+    if course_data['name'] == "Нет названия":
+        return {"message": f"Курс не добавлен; Пустой запрос."}
+    if check_course_exists(course_data['name']):
+        return {"message": f"Курс '{course.name}' уже существует в базе."}
     course_id = add_course_to_db(course_data)
 
     # Получаем данные курса из БД
@@ -45,6 +57,10 @@ async def add_course(course: Course):
             conn = sqlite3.connect(DB_FILE)
             cursor = conn.cursor()
             cursor.execute("UPDATE courses SET valuate = ? WHERE id = ?", (str(rating), course_id))
+            conn.commit()
+            cursor.execute("UPDATE courses SET theme = ? WHERE id = ?", (str(theme), course_id))
+            conn.commit()
+            cursor.execute("UPDATE courses SET difficulty = ? WHERE id = ?", (str(level), course_id))
             conn.commit()
             conn.close()
             return {

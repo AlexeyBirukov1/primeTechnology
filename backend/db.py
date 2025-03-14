@@ -10,6 +10,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS courses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
+            theme TEXT,
             description TEXT,
             price TEXT,
             rating TEXT,
@@ -26,10 +27,11 @@ def add_course_to_db(course_data: Dict) -> int:
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO courses (name, description, price, rating, reviews, difficulty, valuate)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO courses (name, theme, description, price, rating, reviews, difficulty, valuate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         course_data['name'],
+        course_data.get('theme', 'Не определена'),
         course_data['description'],
         course_data['price'],
         course_data['rating'],
